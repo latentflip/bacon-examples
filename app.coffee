@@ -11,7 +11,7 @@ pMap = (fn) ->
     }
 
 
-drawStream = (title, stream) ->
+drawS = (title, stream) ->
   svg = d3.select('#bacon').append('svg')
   svg.append('text')
         .text(title)
@@ -27,7 +27,7 @@ drawStream = (title, stream) ->
                 .data(circles, (d) -> d.time)
     
     sel.enter().append('circle')
-                .attr({cy: 25, r: 20, cx: 20})
+                .attr({cy: 40, r: 20, cx: 20})
                 .attr('fill', (d) -> d.color)
                 .attr('r', (d) -> d.v)
 
@@ -51,26 +51,28 @@ function get_random_color() {
 `
 
 
-textStream = $('#myInput').asEventStream('change', (ev) -> parseInt($(ev.currentTarget).val()) )
-buttonStream = $('#myInputButton').asEventStream('click', -> 3)
-inputStream = textStream.merge(buttonStream)
+textS = $('#myInput').asEventStream('change', (ev) -> parseInt($(ev.currentTarget).val()) )
+buttonS = $('#myInputButton').asEventStream('click', -> 3)
    
+textS = textS.map((v) -> { v: v, color: get_random_color() })
+buttonS = buttonS.map((v) -> { v: v, color: get_random_color() })
+inputS = textS.merge(buttonS)
 
+biggerS = inputS.map( pMap( (v) -> v * 3 ) )
 
-circleS = inputStream.map((v) -> { v: v, color: get_random_color() })
-
-add = (a, b) -> a + b
-addStream = circleS.scan(0, (a,b)-> { v: (a.v||0)+(b.v||0), color: 'black'})
-addStream.log()
-
-
-inputS = circleS
-biggerS = circleS.map( pMap( (v) -> v * 3 ) )
+#add = (a, b) -> a + b
+#addS = biggerS.scan(0, (a,b)-> { v: (a.v||0)+(b.v||0), color: 'black'})
+#slidingS = biggerS.slidingWindow(5).map( (v) ->
+#  (v[0] + v[1] + v[2] + v[3] + v[4] + v[5])/5 )
 
 delay = 0
 setInterval (-> delay = Math.random()*2000), 100
 
-drawStream 'InputStream', inputS
-drawStream 'FlatMap', inputS.flatMap( (p) -> Bacon.later(delay, p) )
-drawStream 'FlatMapLatest', inputS.flatMapLatest( (p) -> Bacon.later(delay, p) )
-drawStream 'Running Sum', addStream
+drawS 'ButtonS', buttonS
+drawS 'InputS', textS
+drawS 'Merged', inputS
+drawS 'Map * 3', biggerS
+#drawS 'Running Sum', slidingS
+
+drawS 'FlatMap (add random delay)', biggerS.flatMap( (p) -> Bacon.later(delay, p) )
+drawS 'FlatMapLatest', biggerS.flatMapLatest( (p) -> Bacon.later(delay, p) )
