@@ -31,9 +31,20 @@ drawS = (title, stream) ->
                 .attr('fill', (d) -> d.color)
                 .attr('r', (d) -> d.v)
 
+
     sel.attr('cx', (d) -> scale(d.time))
     
     sel.exit().remove()
+
+    tsel = svg.selectAll('text.p')
+                .data(circles, (d) -> d.time)
+    tsel.enter().append('text')
+                    .attr('class', 'p')
+                    .text( ((d) -> d.v.toString()))
+                    .attr('y', 70)
+                    .attr('text-anchor', 'middle')
+    tsel.attr('x', (d) -> scale(d.time) )
+    tsel.exit().remove()
 
   time.assign drawCircles
 
@@ -51,7 +62,7 @@ function get_random_color() {
 `
 
 
-textS = $('#myInput').asEventStream('change', (ev) -> parseInt($(ev.currentTarget).val()) )
+textS = $('#myInput').asEventStream('keyup', (ev) -> parseInt($(ev.currentTarget).val()) ).map( (v) -> Math.min(v,20))
 buttonS = $('#myInputButton').asEventStream('click', -> 3)
    
 textS = textS.map((v) -> { v: v, color: get_random_color() })

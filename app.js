@@ -45,7 +45,7 @@
       return circles.push(c);
     });
     drawCircles = function() {
-      var sel;
+      var sel, tsel;
       sel = svg.selectAll('circle').data(circles, function(d) {
         return d.time;
       });
@@ -61,7 +61,17 @@
       sel.attr('cx', function(d) {
         return scale(d.time);
       });
-      return sel.exit().remove();
+      sel.exit().remove();
+      tsel = svg.selectAll('text.p').data(circles, function(d) {
+        return d.time;
+      });
+      tsel.enter().append('text').attr('class', 'p').text((function(d) {
+        return d.v.toString();
+      })).attr('y', 70).attr('text-anchor', 'middle');
+      tsel.attr('x', function(d) {
+        return scale(d.time);
+      });
+      return tsel.exit().remove();
     };
     return time.assign(drawCircles);
   };
@@ -79,8 +89,10 @@ function get_random_color() {
 ;
 
 
-  textS = $('#myInput').asEventStream('change', function(ev) {
+  textS = $('#myInput').asEventStream('keyup', function(ev) {
     return parseInt($(ev.currentTarget).val());
+  }).map(function(v) {
+    return Math.min(v, 20);
   });
 
   buttonS = $('#myInputButton').asEventStream('click', function() {
