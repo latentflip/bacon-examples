@@ -113,19 +113,19 @@ function get_random_color() {
     return delay = Math.random() * 2000;
   }), 100);
 
-  drawS('ButtonS', buttonS);
+  drawS('Text Box Changes', textS);
 
-  drawS('InputS', textS);
+  drawS('Button Changes', buttonS);
 
-  drawS('Merged', inputS);
+  drawS('Text and button changes merged', inputS);
 
-  drawS('Map * 3', biggerS);
+  drawS('Merged mapped * 3', biggerS);
 
   drawS('FlatMap (add random delay)', biggerS.flatMap(function(p) {
     return Bacon.later(delay, p);
   }));
 
-  drawS('FlatMapLatest', biggerS.flatMapLatest(function(p) {
+  drawS('FlatMapLatest (same random delay)', biggerS.flatMapLatest(function(p) {
     return Bacon.later(delay, p);
   }));
 

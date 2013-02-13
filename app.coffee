@@ -68,11 +68,11 @@ biggerS = inputS.map( pMap( (v) -> v * 3 ) )
 delay = 0
 setInterval (-> delay = Math.random()*2000), 100
 
-drawS 'ButtonS', buttonS
-drawS 'InputS', textS
-drawS 'Merged', inputS
-drawS 'Map * 3', biggerS
+drawS 'Text Box Changes', textS
+drawS 'Button Changes', buttonS
+drawS 'Text and button changes merged', inputS
+drawS 'Merged mapped * 3', biggerS
 #drawS 'Running Sum', slidingS
 
 drawS 'FlatMap (add random delay)', biggerS.flatMap( (p) -> Bacon.later(delay, p) )
-drawS 'FlatMapLatest', biggerS.flatMapLatest( (p) -> Bacon.later(delay, p) )
+drawS 'FlatMapLatest (same random delay)', biggerS.flatMapLatest( (p) -> Bacon.later(delay, p) )
